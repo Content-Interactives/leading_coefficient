@@ -113,6 +113,33 @@ export default function LeadingCoefficient() {
     const numerator = parts[0];
     const denominator = parts.length > 1 ? parts[1] : '';
     
+    // Extract coefficients from numerator and denominator
+    const numCoeffMatch = numerator.match(/^([+-]?\d*\.?\d*)/);
+    const denomCoeffMatch = denominator.match(/^([+-]?\d*\.?\d*)/);
+    
+    let numCoeff = 1;
+    let denomCoeff = 1;
+    
+    if (numCoeffMatch && numCoeffMatch[1]) {
+      if (numCoeffMatch[1] === '-') {
+        numCoeff = -1;
+      } else if (numCoeffMatch[1] === '+') {
+        numCoeff = 1;
+      } else {
+        numCoeff = parseFloat(numCoeffMatch[1]) || 1;
+      }
+    }
+    
+    if (denomCoeffMatch && denomCoeffMatch[1]) {
+      if (denomCoeffMatch[1] === '-') {
+        denomCoeff = -1;
+      } else if (denomCoeffMatch[1] === '+') {
+        denomCoeff = 1;
+      } else {
+        denomCoeff = parseFloat(denomCoeffMatch[1]) || 1;
+      }
+    }
+    
     // Process numerator variables
     let numeratorVarPart = numerator.replace(/^[+-]?\d*\.?\d*/, '');
     const variablesWithPowers = [];
@@ -254,7 +281,19 @@ export default function LeadingCoefficient() {
       }
     }
     
-    return variablesWithPowers;
+    // Calculate the final coefficient by dividing numerator coefficient by denominator coefficient
+    const finalCoeff = numCoeff / denomCoeff;
+    
+    // If there are no variables, add a special entry to represent the coefficient
+    if (variablesWithPowers.length === 0) {
+      variablesWithPowers.push({ variable: 'constant', power: 0, coefficient: finalCoeff });
+    } else {
+      // Add the coefficient to the first variable entry
+      variablesWithPowers[0].coefficient = finalCoeff;
+    }
+    
+    // Remove any variables with zero power
+    return variablesWithPowers.filter(v => v.power !== 0);
   };
 
   // Calculate total degree of a term based on sum of all variable powers
@@ -800,32 +839,36 @@ export default function LeadingCoefficient() {
           continue;
         }
         
-        // Extract coefficient
-        let coefficient;
-        if (cleanTerm.match(/^-[a-z]/i)) {
-          coefficient = -1;
-        } else if (cleanTerm.match(/^\+?[a-z]/i)) {
-          coefficient = 1;
+        // Extract coefficient and variables
+        const variablesWithPowers = parseVariablesInTerm(cleanTerm);
+        
+        // Get the coefficient from the variables array if it exists
+        let coefficient = 1;
+        if (variablesWithPowers.length > 0) {
+          // Get coefficient from the first variable entry
+          coefficient = variablesWithPowers[0].coefficient || 1;
         } else {
+          // If no variables, use the first coefficient found
           const coeffMatch = cleanTerm.match(/^([+-]?\d*\.?\d*)/);
           if (coeffMatch && coeffMatch[1]) {
-            coefficient = coeffMatch[1] === '-' ? -1 : 
-                         coeffMatch[1] === '+' ? 1 : 
-                         parseFloat(coeffMatch[1]);
-          } else {
-            coefficient = 1;
+            if (coeffMatch[1] === '-') {
+              coefficient = -1;
+            } else if (coeffMatch[1] === '+') {
+              coefficient = 1;
+            } else {
+              coefficient = parseFloat(coeffMatch[1]) || 1;
+            }
           }
         }
-        
-        // Extract all individual variables and their powers
-        const variablesWithPowers = parseVariablesInTerm(cleanTerm);
         
         // Calculate total degree as sum of all variable powers
         const totalDegree = calculateTotalDegree(variablesWithPowers);
         
         // Create a combined variable string (used for grouping similar terms)
         // Sort variables to ensure consistent representation
-        const sortedVars = [...variablesWithPowers].sort((a, b) => a.variable.localeCompare(b.variable));
+        const sortedVars = [...variablesWithPowers]
+          .filter(v => v.variable !== 'constant')
+          .sort((a, b) => a.variable.localeCompare(b.variable));
         
         let variableStr = '';
         for (const { variable, power } of sortedVars) {
@@ -834,7 +877,7 @@ export default function LeadingCoefficient() {
         
         parsedTerms.push({ 
           coefficient, 
-          variables: variablesWithPowers,
+          variables: variablesWithPowers.filter(v => v.variable !== 'constant'),
           variable: variableStr, // Store the combined variable representation 
           degree: totalDegree,   // Store the correct total degree
           originalTerm: cleanTerm
