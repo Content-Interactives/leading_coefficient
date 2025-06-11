@@ -6,6 +6,7 @@ export default function LeadingCoefficient() {
   const [error, setError] = useState(null);
   const [isValid, setIsValid] = useState(false);
   const [analyzed, setAnalyzed] = useState(false);
+  const [showGlow, setShowGlow] = useState(true);
   // No debugging state
 
   const checkValidity = (expression) => {
@@ -1167,6 +1168,7 @@ export default function LeadingCoefficient() {
       return;
     }
 
+    setShowGlow(false); // Disable glow when valid expression is processed
     const analysisResult = analyzePolynomial(inputValue);
     setResult(analysisResult);
     setAnalyzed(true);
@@ -1175,69 +1177,136 @@ export default function LeadingCoefficient() {
   // No debugging toggle function
 
   return (
-    <div className="w-full max-w-md mx-auto shadow-md bg-white rounded-lg overflow-hidden">
-      <div className="p-4 space-y-4">
-        {/* Title removed */}
-        
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Enter a valid polynomial expression:
-          </label>
-          <div className="flex space-x-2">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder="Example: xy + 3x^2y - 5"
-              className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-            />
-            <button
-              onClick={handleFindClick}
-              disabled={!isValid}
-              className={`px-3 py-2 ${
-                isValid ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'
-              } text-white rounded-md transition-colors`}
-            >
-              Find
-            </button>
-          </div>
-        </div>
+    <>
+      <style>{`
+        @property --r {
+          syntax: '<angle>';
+          inherits: false;
+          initial-value: 0deg;
+        }
 
-        {analyzed && (
-          <div className="bg-gray-50 p-4 rounded-md">
-            {error && (
-              <div className="bg-red-50 p-3 rounded-md border border-red-200">
-                <p className="text-sm font-medium text-red-800">
-                  Not a valid polynomial
-                </p>
+        .glow-button { 
+          min-width: auto; 
+          height: auto; 
+          position: relative; 
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1;
+          transition: all .3s ease;
+          padding: 7px;
+        }
+
+        .glow-button::before {
+          content: "";
+          display: block;
+          position: absolute;
+          background: rgb(249, 250, 251);
+          inset: 2px;
+          border-radius: 4px;
+          z-index: -2;
+        }
+
+        .glow-button-white::before {
+          content: "";
+          display: block;
+          position: absolute;
+          background: #fff;
+          inset: 2px;
+          border-radius: 4px;
+          z-index: -2;
+        }
+
+        .simple-glow {
+          background: conic-gradient(
+            from var(--r),
+            transparent 0%,
+            rgb(0, 255, 132) 2%,
+            rgb(0, 214, 111) 8%,
+            rgb(0, 174, 90) 12%,
+            rgb(0, 133, 69) 14%,
+            transparent 15%
+          );
+          animation: rotating 3s linear infinite;
+          transition: animation 0.3s ease;
+        }
+
+        .simple-glow.stopped {
+          animation: none;
+          background: none;
+        }
+
+        @keyframes rotating {
+          0% {
+            --r: 0deg;
+          }
+          100% {
+            --r: 360deg;
+          }
+        }
+      `}</style>
+      <div className="w-full max-w-md mx-auto shadow-md bg-white rounded-lg overflow-hidden">
+        <div className="p-4 pb-0">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Enter a valid polynomial expression:
+            </label>
+            <div className="flex space-x-2 pb-3 items-center">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                placeholder="Example: xy + 3x^2y - 5"
+                className="flex-1 h-11 px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+              />
+              <div className={`glow-button glow-button-white ${showGlow ? 'simple-glow' : 'simple-glow stopped'}`}>
+                <button
+                  onClick={handleFindClick}
+                  className="px-3 py-2 bg-[#00783E] hover:bg-[#006633] text-white rounded-md transition-colors"
+                >
+                  Find
+                </button>
               </div>
-            )}
-            {result && !error && (
-              <div className="space-y-3">
-                <div className="bg-green-50 p-3 rounded-md border border-green-200">
-                  <div className="text-sm font-medium text-green-800">
-                    Leading Term:
-                    <div className="ml-4 mt-1">
-                      {result.variables && result.variables.length > 0 ? (
-                        formatTerm(result.leadingCoefficient, result.degree, result.variable, result.variables)
-                      ) : (
-                        formatTerm(result.leadingCoefficient, result.degree, result.variable)
-                      )}
+            </div>
+          </div>
+
+          {analyzed && (
+            <div className="bg-gray-50 -mx-4 mb-0.3 p-4 rounded-b-lg">
+              {error && (
+                <div className="bg-red-50 p-3 rounded-md border border-red-200">
+                  <p className="text-sm font-medium text-red-800">
+                    Not a valid polynomial
+                  </p>
+                </div>
+              )}
+              {result && !error && (
+                <div className="space-y-3">
+                  <div className="bg-green-50 p-3 rounded-md border border-green-200">
+                    <div className="text-sm font-medium text-green-800">
+                      Leading Term:
+                      <div className="ml-4 mt-1">
+                        {result.variables && result.variables.length > 0 ? (
+                          formatTerm(result.leadingCoefficient, result.degree, result.variable, result.variables)
+                        ) : (
+                          formatTerm(result.leadingCoefficient, result.degree, result.variable)
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-sm font-medium text-green-800 mt-2">
-                    Leading Coefficient:
-                    <div className="ml-4 mt-1">
-                      {result.leadingCoefficient}
+                    <div className="text-sm font-medium text-green-800 mt-2">
+                      Leading Coefficient:
+                      <div className="ml-4 mt-1">
+                        {result.leadingCoefficient}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-        {/* Debug feature removed */}
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
