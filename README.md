@@ -1,12 +1,42 @@
-# React + Vite
+# Leading Coefficient
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The **Leading Coefficient** interactive helps students understand the role of the leading coefficient in polynomials. By adjusting its value, students can see how it affects the steepness and direction of the graph of a quadratic or higher-degree function.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔗 Live Interactive
 
-## Expanding the ESLint configuration
+Try it out here:  
+👉 [https://content-interactives.github.io/leading_coefficient](https://content-interactives.github.io/leading_coefficient)
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🌐 Where This Interactive Is Being Used
+
+This interactive is currently featured in the following locations:
+
+- <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/5d12571f-8e12-4441-98ab-c0bc94069a96" /> **CK-12 Intent Response**  
+  - 👉 PRODUCTION: PENDING  
+  - 👉 MASTER: PENDING  
+- 📘 **CK-12 Flexbooks**
+  - 👉 PENDING
+
+---
+
+## 📚 Standards & Subjects
+
+This interactive aligns with the following topics and standards:
+
+- **📂 Subject Area**: High School Math  
+- **🧮 Topic**: Algebra (Polynomials & Functions)  
+- **📏 Common Core**:  
+  - HSA-APR.A.2 – Understand that polynomials form a system analogous to integers, closed under addition, subtraction, and multiplication.  
+  - HSF-IF.C.7 – Graph functions expressed symbolically and show key features of the graph.  
+  - HSF-BF.B.3 – Identify the effect on the graph of replacing *f(x)* by *af(x)*, *f(x) + k*, *f(x + k)*, and *kf(x)*.
+
+---
+
+## 🛠️ Developer Notes
+
+- Built with: React, HTML, CSS, JavaScript  
+- Deployed via GitHub Pages
