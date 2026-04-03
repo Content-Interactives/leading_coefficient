@@ -1,42 +1,54 @@
 # Leading Coefficient
 
-The **Leading Coefficient** interactive helps students understand the role of the leading coefficient in polynomials. By adjusting its value, students can see how it affects the steepness and direction of the graph of a quadratic or higher-degree function.
+React + Vite visualization of how the leading coefficient \(a\) scales a polynomial graph (\(af(x)\) style transformations). Sliders or inputs in `LeadingCoefficient.jsx` update the plotted function.
+
+**Live site:** [https://content-interactives.github.io/leading_coefficient](https://content-interactives.github.io/leading_coefficient)
+
+Curriculum alignment and placement: [Standards.md](Standards.md).
 
 ---
 
-## 🔗 Live Interactive
+## Stack
 
-Try it out here:  
-👉 [https://content-interactives.github.io/leading_coefficient](https://content-interactives.github.io/leading_coefficient)
-
----
-
-## 🌐 Where This Interactive Is Being Used
-
-This interactive is currently featured in the following locations:
-
-- <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/5d12571f-8e12-4441-98ab-c0bc94069a96" /> **CK-12 Intent Response**  
-  - 👉 PRODUCTION: PENDING  
-  - 👉 MASTER: PENDING  
-- 📘 **CK-12 Flexbooks**
-  - 👉 PENDING
+| Layer | Notes |
+|--------|--------|
+| Build | Vite 6, `@vitejs/plugin-react` |
+| UI | React 19 |
+| Styling | Tailwind 3 |
+| Icons | lucide-react |
+| Deploy | `gh-pages -d dist`; `predeploy` runs `vite build` |
 
 ---
 
-## 📚 Standards & Subjects
+## Layout
 
-This interactive aligns with the following topics and standards:
-
-- **📂 Subject Area**: High School Math  
-- **🧮 Topic**: Algebra (Polynomials & Functions)  
-- **📏 Common Core**:  
-  - HSA-APR.A.2 – Understand that polynomials form a system analogous to integers, closed under addition, subtraction, and multiplication.  
-  - HSF-IF.C.7 – Graph functions expressed symbolically and show key features of the graph.  
-  - HSF-BF.B.3 – Identify the effect on the graph of replacing *f(x)* by *af(x)*, *f(x) + k*, *f(x + k)*, and *kf(x)*.
+```
+vite.config.js          # base: '/leading_coefficient/'
+src/
+  main.jsx → App.jsx → components/LeadingCoefficient.jsx
+  components/ui/
+```
 
 ---
 
-## 🛠️ Developer Notes
+## `vite.config.js`
 
-- Built with: React, HTML, CSS, JavaScript  
-- Deployed via GitHub Pages
+`base: '/leading_coefficient/'` must match the GitHub Pages repository path.
+
+---
+
+## Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Vite dev server |
+| `npm run build` | Production build → `dist/` |
+| `npm run preview` | Preview production build |
+| `npm run lint` | ESLint |
+| `npm run deploy` | Build and push `dist/` to `gh-pages` |
+
+---
+
+## Embedding
+
+Confirm canvas/SVG viewport size in `LeadingCoefficient.jsx` for iframe sizing.
